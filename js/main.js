@@ -132,7 +132,7 @@ function evaluateBoard(game, move, prevSum, color) {
   if (game.in_checkmate()) {
 
     // Opponent is in checkmate (good for us)
-    if (move.color === color) {
+    if (move && move.color === color) {
       return 10 ** 10;
     }
     // Our king's in checkmate (bad for us)
@@ -221,20 +221,7 @@ function evaluateBoard(game, move, prevSum, color) {
       prevSum += pstSelf[move.color][move.piece][to[0]][to[1]];
     }
   }
-  if (euclideanDistance(getPiecePosition(game, 'k', 'w'), getPiecePosition(game, 'n', 'b')) < 3) {
-    prevSum += 100;
-  }
-  var kingPosition = getPiecePosition(game, 'k', 'w');
-  var enemyRookPosition = getPiecePosition(game, 'r', 'b');
-  var enemyBishopPosition = getPiecePosition(game, 'b', 'b');
 
-  if (kingPosition && enemyRookPosition && areInSameFileOrRank(kingPosition, enemyRookPosition)) {
-    prevSum -= 50;  // Adjust the value according to your evaluation strategy
-  }
-
-  if (kingPosition && enemyBishopPosition && areInSameFileOrRank(kingPosition, enemyBishopPosition)) {
-    prevSum -= 50;  // Adjust the value according to your evaluation strategy
-  }
   return prevSum;
 
 }
@@ -256,42 +243,7 @@ function evaluateBoard(game, move, prevSum, color) {
  * Output:
  *  the best move at the root of the current subtree.
  */
-function areInSameFileOrRank(position1, position2) {
-  // Two positions are in the same file if their x-coordinates are equal,
-  // and in the same rank if their y-coordinates are equal.
-  var [x1, y1] = getCoordinates(position1);
-  var [x2, y2] = getCoordinates(position2);
-  return x1 === x2 || y1 === y2;
-}
-function getPiecePosition(game, pieceType, pieceColor) {
-  var board = game.board();
-  for (var i = 0; i < 8; i++) {
-    for (var j = 0; j < 8; j++) {
-      var piece = board[i][j];
-      if (piece && piece.type === pieceType && piece.color === pieceColor) {
-        // Convert the row and column to algebraic notation (e.g., 'a1', 'h8', etc.)
-        var position = String.fromCharCode('a'.charCodeAt(0) + j) + (8 - i);
-        return position;
-      }
-    }
-  }
-  return null;  // Return null if the piece is not found
-}
-function getCoordinates(position) {
-  if (position !== null) {
-    var file = position.charCodeAt(0) - 'a'.charCodeAt(0);  // Column, 'a' is 0, 'b' is 1, etc.
-    var rank = position.charAt(1) - 1;  // Row, '1' is 0, '2' is 1, etc.
-    return [file, rank];
-  }
-  return null;
-}
-function euclideanDistance(position1, position2) {
-  var [x1, y1] = getCoordinates(position1);
-  var [x2, y2] = getCoordinates(position2);
-  var dx = x2 - x1;
-  var dy = y2 - y1;
-  return Math.sqrt(dx * dx + dy * dy);
-}
+
 function minimax(game, depth, alpha, beta, isMaximizingPlayer, sum, color) {
   positionCount++;
   var children = game.ugly_moves({ verbose: true });
