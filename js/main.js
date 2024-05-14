@@ -221,7 +221,7 @@ function evaluateBoard(game, move, prevSum, color) {
       prevSum += pstSelf[move.color][move.piece][to[0]][to[1]];
     }
   }
-  
+
   return prevSum;
 
 }
@@ -241,13 +241,13 @@ function countPieces(game) {
 //Raise depth if there are fewer pieces on the board
 function setDepth(game) {
   var pieceCount = countPieces(game);
-  if (pieceCount<6) {
+  if (pieceCount < 6) {
     return 6;
   }
-  if(pieceCount < 10){
+  if (pieceCount < 10) {
     return 5;
   }
-  if(pieceCount < 15){
+  if (pieceCount < 15) {
     return 4;
   }
   return 3;
