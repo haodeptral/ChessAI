@@ -221,10 +221,38 @@ function evaluateBoard(game, move, prevSum, color) {
       prevSum += pstSelf[move.color][move.piece][to[0]][to[1]];
     }
   }
-
+  
   return prevSum;
 
 }
+//Count the number of pieces on the board
+function countPieces(game) {
+  var board = game.board();
+  var pieceCount = 0;
+  for (var i = 0; i < board.length; i++) {
+    for (var j = 0; j < board[i].length; j++) {
+      if (board[i][j] !== null) {
+        pieceCount++;
+      }
+    }
+  }
+  return pieceCount;
+}
+//Raise depth if there are fewer pieces on the board
+function setDepth(game) {
+  var pieceCount = countPieces(game);
+  if (pieceCount<6) {
+    return 6;
+  }
+  if(pieceCount < 10){
+    return 5;
+  }
+  if(pieceCount < 15){
+    return 4;
+  }
+  return 3;
+}
+
 
 /*
  * Performs the minimax algorithm to choose the best move: https://en.wikipedia.org/wiki/Minimax (pseudocode provided)
@@ -356,11 +384,7 @@ function updateAdvantage() {
 function getBestMove(game, color, currSum) {
   positionCount = 0;
 
-  if (color === 'b') {
-    var depth = parseInt($('#search-depth').find(':selected').text());
-  } else {
-    var depth = parseInt($('#search-depth-white').find(':selected').text());
-  }
+  depth = setDepth(game);
 
   var d = new Date().getTime();
   var [bestMove, bestMoveValue] = minimax(
@@ -675,8 +699,3 @@ function onSnapEnd() {
   board.position(game.fen());
   $pgn.html(game.pgn());
 }
-
-// Assuming 'playerMove' and 'computerMove' are the latest moves made by the player and the computer
-// if (move.color === 'w') {
-//   document.getElementById('witheMoves').innerHTML += <li>${playerMove}</li>;
-// }else document.getElementById('blackMoves').innerHTML += <li>${playerMove}</li>;
